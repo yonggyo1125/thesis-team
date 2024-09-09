@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -33,6 +34,8 @@ public class QThesis extends EntityPathBase<Thesis> {
     public final DateTimePath<java.time.LocalDateTime> deletedAt = _super.deletedAt;
 
     public final StringPath email = createString("email");
+
+    public final ListPath<Field, QField> fields = this.<Field, QField>createList("fields", Field.class, QField.class, PathInits.DIRECT2);
 
     public final StringPath gid = createString("gid");
 

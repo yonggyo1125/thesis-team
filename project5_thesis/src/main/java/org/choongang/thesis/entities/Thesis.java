@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.choongang.global.entities.BaseMemberEntity;
 
+import java.util.List;
+
 @Data
 @Entity
 @Builder
@@ -15,6 +17,9 @@ import org.choongang.global.entities.BaseMemberEntity;
 public class Thesis extends BaseMemberEntity {
     @Id @GeneratedValue
     private Long tid;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Field> fields;
 
     @Column(length=40, nullable = false)
     private String poster; // 편집자
