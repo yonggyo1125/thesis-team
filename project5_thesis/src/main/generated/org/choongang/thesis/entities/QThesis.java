@@ -22,6 +22,8 @@ public class QThesis extends EntityPathBase<Thesis> {
 
     public final org.choongang.global.entities.QBaseMemberEntity _super = new org.choongang.global.entities.QBaseMemberEntity(this);
 
+    public final EnumPath<org.choongang.thesis.constants.Category> category = createEnum("category", org.choongang.thesis.constants.Category.class);
+
     public final StringPath contributor = createString("contributor");
 
     //inherited

@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.choongang.file.entities.FileInfo;
 import org.choongang.global.entities.BaseMemberEntity;
+import org.choongang.thesis.constants.Category;
 
 import java.util.List;
 
@@ -17,6 +19,10 @@ import java.util.List;
 public class Thesis extends BaseMemberEntity {
     @Id @GeneratedValue
     private Long tid;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length=20, nullable = false)
+    private Category category;
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Field> fields;
@@ -54,4 +60,10 @@ public class Thesis extends BaseMemberEntity {
 
     @Column(length=80, nullable = false)
     private String email; // 이메일
+
+    @Transient
+    private FileInfo fileInfo;
+
+    @Transient
+    private String _category; // 문자열 분류명
 }
