@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: thesis-service
+  cloud:
+    config:
+      uri: ${configServerUrl}
