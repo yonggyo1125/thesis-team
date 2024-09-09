@@ -1,15 +1,14 @@
 package org.choongang.thesis.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name="Thesis", description = "논문 API")
 @RestController
@@ -25,7 +24,7 @@ public class ThesisController {
      * 	GET - /mylist : 회원 자신이 등록한 논문 목록
      */
 
-    @Operation(summary = "논문 등록")
+    @Operation(summary = "논문 등록", method="POST")
     @ApiResponse(responseCode = "201")
     @PostMapping
     public ResponseEntity<Void> register() {
@@ -33,8 +32,11 @@ public class ThesisController {
         return save();
     }
 
-    @Operation(summary = "논문 수정")
+    @Operation(summary = "논문 수정", method="PATCH")
     @ApiResponse(responseCode = "201")
+    @Parameters({
+            @Parameter(name="tid", required = true, description = "경로변수, 논문 등록번호", example="100")
+    })
     @PatchMapping("/update/{tid}")
     public ResponseEntity<Void> update(@PathVariable("tid") Long tid) {
 
@@ -44,5 +46,13 @@ public class ThesisController {
     public ResponseEntity<Void> save() {
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Operation(summary = "논문 삭제", method="DELETE")
+    @ApiResponse(responseCode = "200")
+    @Parameter(name="tid", required = true, description = "경로변수, 논문 등록번호", example = "100")
+    @DeleteMapping("/{tid}")
+    public void delete(@PathVariable("tid") Long tid) {
+
     }
 }
