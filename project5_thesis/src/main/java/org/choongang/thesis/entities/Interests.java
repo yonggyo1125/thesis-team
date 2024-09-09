@@ -3,10 +3,12 @@ package org.choongang.thesis.entities;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import lombok.Data;
 
 @Data
 @Entity
+@IdClass(InterestsId.class)
 public class Interests {
     @Id
     @Column(length=30)
