@@ -1,4 +1,41 @@
 package org.choongang.note.entities;
 
-public class NoteData {
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.choongang.global.entities.BaseEntity;
+
+@Data
+@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class NoteData extends BaseEntity {
+    @Id @GeneratedValue
+    private Long noteSeq; // 노트 번호
+
+    @JoinColumn(name="nid")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Note note;
+
+    @Column(length=60)
+    private String category;
+
+    @Column(length=45, nullable = false)
+    private String gid; // 그룹 ID
+
+    @Column(nullable = false)
+    private String subject; // 제목
+
+    @Lob
+    @Column(nullable = false)
+    private String content; // 내용
+
+    @Column(length=80, nullable = false)
+    private String email; // 로그인 회원 이메일
+
+    @Column(length=40, nullable = false)
+    private String username; // 로그인 회원명
 }
