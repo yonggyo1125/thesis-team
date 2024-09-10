@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.choongang.global.CommonSearch;
+import org.choongang.global.Utils;
+import org.choongang.global.exceptions.BadRequestException;
 import org.choongang.global.rests.JSONData;
 import org.choongang.member.MemberUtil;
 import org.springframework.http.HttpStatus;
@@ -21,21 +23,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class ThesisController {
-    /**
-     * POST - /  : 논문 등록
-     * 	PATCH - /update/{tid} : 논문 수정
-     * 	DELETE - /{tid} : 논문 삭제
-     *
-     * 	GET - /info/{tid} : 논문 한개 조회
-     * 	GET - /list : 전체 논문 조회(모든 논문) : 승인되고, 공개 중인 논문만 조회
-     * 	GET - /mylist : 회원 자신이 등록한 논문 목록
-     */
+
+    private final Utils utils;
 
     @Operation(summary = "논문 등록", method="POST")
     @ApiResponse(responseCode = "201")
     @PostMapping
     public ResponseEntity<Void> register(@Valid @RequestBody RequestThesis form, Errors errors) {
-
+        form.setMode("register");
         return save(form, errors);
     }
 
@@ -45,12 +40,16 @@ public class ThesisController {
             @Parameter(name="tid", required = true, description = "경로변수, 논문 등록번호", example="100")
     })
     @PatchMapping("/update/{tid}")
-    public ResponseEntity<Void> update(@PathVariable("tid") Long tid) {
+    public ResponseEntity<Void> update(@PathVariable("tid") Long tid, @Valid @RequestBody RequestThesis form, Errors errors) {
 
-        return save();
+        return save(form, errors);
     }
 
-    public ResponseEntity<Void> save() {
+    public ResponseEntity<Void> save(RequestThesis form, Errors errors) {
+
+        if (errors.hasErrors()) {
+            throw new BadRequestException(utils.getErrorMessages(errors));
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
