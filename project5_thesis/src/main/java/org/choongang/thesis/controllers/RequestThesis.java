@@ -13,6 +13,9 @@ public class RequestThesis {
     private Long tid;
 
     @NotBlank
+    private String mode; // register, update
+
+    @NotBlank
     private String category;
 
     @NotNull

@@ -36,7 +36,7 @@ public class ThesisController {
     @PostMapping
     public ResponseEntity<Void> register(@Valid @RequestBody RequestThesis form, Errors errors) {
 
-        return save();
+        return save(form, errors);
     }
 
     @Operation(summary = "논문 수정", method="PATCH")
