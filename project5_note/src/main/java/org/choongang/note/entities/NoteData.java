@@ -5,7 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.choongang.file.entities.FileInfo;
 import org.choongang.global.entities.BaseEntity;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -38,4 +41,10 @@ public class NoteData extends BaseEntity {
 
     @Column(length=40, nullable = false)
     private String username; // 로그인 회원명
+    
+    @Transient
+    private List<FileInfo> editorImages; // 에디터 이미지 
+    
+    @Transient
+    private List<FileInfo> attachFiles; // 첨부 파일(다운로드용)
 }
