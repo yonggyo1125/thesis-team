@@ -8,11 +8,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.choongang.global.CommonSearch;
+import org.choongang.global.ListData;
 import org.choongang.global.Utils;
 import org.choongang.global.exceptions.BadRequestException;
 import org.choongang.global.rests.JSONData;
 import org.choongang.member.MemberUtil;
+import org.choongang.thesis.entities.Thesis;
 import org.choongang.thesis.services.ThesisDeleteService;
+import org.choongang.thesis.services.ThesisInfoService;
 import org.choongang.thesis.services.ThesisSaveService;
 import org.choongang.thesis.validators.ThesisValidator;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,7 @@ public class ThesisController {
     private final ThesisValidator thesisValidator;
     private final ThesisSaveService thesisSaveService;
     private final ThesisDeleteService thesisDeleteService;
+    private final ThesisInfoService thesisInfoService;
 
     private final Utils utils;
 
@@ -83,15 +87,20 @@ public class ThesisController {
     @PreAuthorize("permitAll()")
     public JSONData info(@PathVariable("tid") Long tid) {
 
-        return null;
+        Thesis item = thesisInfoService.get(tid);
+
+        return new JSONData(item);
     }
 
     @Operation(summary = "논문 목록 조회", method = "GET")
     @ApiResponse(responseCode = "200")
     @GetMapping("/list")
     @PreAuthorize("permitAll()")
-    public JSONData list() {
-        return null;
+    public JSONData list(@ModelAttribute ThesisSearch search) {
+
+        ListData<Thesis> data = thesisInfoService.getList(search);
+
+        return new JSONData(data);
     }
 
     @Operation(summary = "내가 등록한 논문 목록", method = "GET")

@@ -102,8 +102,11 @@ public class ThesisInfoService {
         List<FileInfo> files = fileInfoService.getList(item.getGid());
         item.setFileInfo(files == null || files.isEmpty() ? null : files.get(0));
 
-        // 학문 분류 처리
+        // 학문 분류 처리 S
         List<Field> fields = item.getFields();
         Map<String, String[]> _fields = fields == null || fields.isEmpty() ? null : fields.stream().collect(Collectors.toMap(Field::getId, f -> new String[]{f.getName(), f.getSubfield()}));
+
+        item.set_fields(_fields);
+        // 학문 분류 처리 E
     }
 }
