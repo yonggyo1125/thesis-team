@@ -12,7 +12,6 @@ import org.choongang.global.ListData;
 import org.choongang.global.Utils;
 import org.choongang.global.exceptions.BadRequestException;
 import org.choongang.global.rests.JSONData;
-import org.choongang.member.MemberUtil;
 import org.choongang.thesis.entities.Thesis;
 import org.choongang.thesis.services.ThesisDeleteService;
 import org.choongang.thesis.services.ThesisInfoService;
@@ -21,7 +20,6 @@ import org.choongang.thesis.validators.ThesisValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -106,8 +104,10 @@ public class ThesisController {
     @Operation(summary = "내가 등록한 논문 목록", method = "GET")
     @ApiResponse(responseCode = "200")
     @GetMapping("/mylist")
-    public JSONData mylist(@ModelAttribute CommonSearch search, @AuthenticationPrincipal MemberUtil memberUtil) {
+    public JSONData mylist(@ModelAttribute ThesisSearch search) {
 
-        return null;
+        ListData<Thesis> data = thesisInfoService.getMyList(search);
+
+        return new JSONData(data);
     }
 }

@@ -7,6 +7,7 @@ import org.choongang.file.entities.FileInfo;
 import org.choongang.file.services.FileInfoService;
 import org.choongang.global.ListData;
 import org.choongang.global.Pagination;
+import org.choongang.member.MemberUtil;
 import org.choongang.thesis.constants.Category;
 import org.choongang.thesis.controllers.RequestThesis;
 import org.choongang.thesis.controllers.ThesisSearch;
@@ -37,6 +38,7 @@ public class ThesisInfoService {
     private final FileInfoService fileInfoService;
     private final HttpServletRequest request;
     private final ModelMapper modelMapper;
+    private final MemberUtil memberUtil;
 
     public Thesis get(Long tid) {
         Thesis item = thesisRepository.findById(tid).orElseThrow(ThesisNotFoundException::new);
@@ -78,7 +80,12 @@ public class ThesisInfoService {
         String skey = search.getSkey();
         List<String> category = search.getCategory();
         List<String> fields = search.getFields();
+        List<String> email = search.getEmail();
 
+        // 작성한 회원 이메일로 조회
+        if (email != null && !email.isEmpty()) {
+            andBuilder.and(thesis.email.in(email));
+        }
         /* 검색 처리 E */
 
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(desc("createdAt")));
@@ -91,6 +98,17 @@ public class ThesisInfoService {
         items.forEach(this::addInfo);
 
         return new ListData<>(items, pagination);
+    }
+
+
+    public ListData<Thesis> getMyList(ThesisSearch search) {
+        if (!memberUtil.isLogin()) {
+            return new ListData<>();
+        }
+
+        String email = memberUtil.getMember().getEmail();
+        search.setEmail(List.of(email));
+        return getList(search);
     }
 
     // 추가 정보 처리
