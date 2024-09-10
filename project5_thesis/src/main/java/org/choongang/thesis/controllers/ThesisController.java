@@ -12,6 +12,7 @@ import org.choongang.global.Utils;
 import org.choongang.global.exceptions.BadRequestException;
 import org.choongang.global.rests.JSONData;
 import org.choongang.member.MemberUtil;
+import org.choongang.thesis.services.ThesisSaveService;
 import org.choongang.thesis.validators.ThesisValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 public class ThesisController {
 
     private final ThesisValidator thesisValidator;
+    private final ThesisSaveService thesisSaveService;
+
     private final Utils utils;
 
     @Operation(summary = "논문 등록", method="POST")
@@ -57,6 +60,8 @@ public class ThesisController {
         if (errors.hasErrors()) {
             throw new BadRequestException(utils.getErrorMessages(errors));
         }
+
+        thesisSaveService.save(form);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
