@@ -5,17 +5,22 @@ import org.choongang.member.MemberUtil;
 import org.choongang.member.entities.Member;
 import org.choongang.thesis.constants.Category;
 import org.choongang.thesis.controllers.RequestThesis;
+import org.choongang.thesis.entities.Field;
 import org.choongang.thesis.entities.Thesis;
 import org.choongang.thesis.exceptions.ThesisNotFoundException;
+import org.choongang.thesis.repositories.FieldRepository;
 import org.choongang.thesis.repositories.ThesisRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class ThesisSaveService {
     private final ThesisRepository thesisRepository;
+    private final FieldRepository fieldRepository;
+
     private final MemberUtil memberUtil;
 
     public void save(RequestThesis form) {
@@ -52,6 +57,14 @@ public class ThesisSaveService {
         thesis.setToc(form.getToc());
         thesis.setLanguage(form.getLanguage());
         thesis.setCountry(form.getCountry());
+
+        /* fields 항목 처리 */
+        List<String> ids = form.getFields();
+        List<Field> fields = null;
+        if (ids != null && !ids.isEmpty()) {
+            fields = fieldRepository.findAllById(ids);
+        }
+        thesis.setFields(fields);
         /* 추가, 수정 공통 처리 S */
 
         thesisRepository.saveAndFlush(thesis);
