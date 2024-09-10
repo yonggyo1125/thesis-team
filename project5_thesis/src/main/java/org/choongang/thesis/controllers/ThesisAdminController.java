@@ -2,6 +2,7 @@ package org.choongang.thesis.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -38,13 +39,20 @@ public class ThesisAdminController {
         
         return null;
     }
-
+    
+    @Operation(summary = "논문 한개 수정", method = "PATCH")
+    @ApiResponse(responseCode = "201")
+    @Parameters({
+            @Parameter(name="tid", required = true, description = "경로변수, 논문 등록번호")
+    })
     @PatchMapping("/update/{tid}")
     public ResponseEntity<Void> update(@PathVariable("tid") Long tid) {
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(summary="논문 목록 수정", method = "PATCH")
+    @ApiResponse(responseCode = "201")
     @PatchMapping
     public ResponseEntity<Void> updateList() {
 
