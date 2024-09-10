@@ -1,6 +1,7 @@
 package org.choongang.thesis.services;
 
 import lombok.RequiredArgsConstructor;
+import org.choongang.file.services.FileUploadDoneService;
 import org.choongang.member.MemberUtil;
 import org.choongang.member.entities.Member;
 import org.choongang.thesis.constants.Category;
@@ -20,6 +21,7 @@ import java.util.Objects;
 public class ThesisSaveService {
     private final ThesisRepository thesisRepository;
     private final FieldRepository fieldRepository;
+    private final FileUploadDoneService uploadDoneService;
 
     private final MemberUtil memberUtil;
 
@@ -70,5 +72,6 @@ public class ThesisSaveService {
         thesisRepository.saveAndFlush(thesis);
 
         // 파일 업로드 완료 처리
+        uploadDoneService.process(thesis.getGid());
     }
 }
