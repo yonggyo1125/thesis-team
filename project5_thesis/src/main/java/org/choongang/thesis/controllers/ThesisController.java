@@ -12,6 +12,7 @@ import org.choongang.global.Utils;
 import org.choongang.global.exceptions.BadRequestException;
 import org.choongang.global.rests.JSONData;
 import org.choongang.member.MemberUtil;
+import org.choongang.thesis.services.ThesisDeleteService;
 import org.choongang.thesis.services.ThesisSaveService;
 import org.choongang.thesis.validators.ThesisValidator;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ public class ThesisController {
 
     private final ThesisValidator thesisValidator;
     private final ThesisSaveService thesisSaveService;
+    private final ThesisDeleteService thesisDeleteService;
 
     private final Utils utils;
 
@@ -71,7 +73,7 @@ public class ThesisController {
     @Parameter(name="tid", required = true, description = "경로변수, 논문 등록번호", example = "100")
     @DeleteMapping("/{tid}")
     public void delete(@PathVariable("tid") Long tid) {
-
+        thesisDeleteService.delete(tid);
     }
 
     @Operation(summary = "논문 한개 조회", method="GET")

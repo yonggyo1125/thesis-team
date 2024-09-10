@@ -3,6 +3,7 @@ package org.choongang.thesis.controllers;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.choongang.file.entities.FileInfo;
 
 import java.util.List;
 import java.util.UUID;
@@ -47,4 +48,5 @@ public class RequestThesis {
 
     private String country; // 국가
 
+    private FileInfo fileInfo; // 논문 파일
 }
