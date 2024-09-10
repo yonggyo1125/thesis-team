@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: note-service
+  cloud:
+    config:
+      uri: ${configServerUrl}
