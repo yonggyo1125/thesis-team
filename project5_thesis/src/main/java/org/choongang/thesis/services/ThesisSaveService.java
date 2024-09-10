@@ -68,5 +68,7 @@ public class ThesisSaveService {
         /* 추가, 수정 공통 처리 S */
 
         thesisRepository.saveAndFlush(thesis);
+
+        // 파일 업로드 완료 처리
     }
 }
