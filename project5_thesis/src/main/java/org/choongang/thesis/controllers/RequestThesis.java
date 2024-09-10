@@ -19,7 +19,7 @@ public class RequestThesis {
     private String category;
 
     @NotNull
-    private List<String> fields;
+    private List<String> fields; // 학문별 분류 코드 목록
 
     @NotBlank
     private String poster; // 편집자
