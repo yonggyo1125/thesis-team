@@ -37,6 +37,7 @@ public class RequestThesis {
     private String gid = UUID.randomUUID().toString(); // 그룹 ID
 
     private boolean visible; //  공개 여부
+    private boolean approval; // 승인 여부
 
     private String publisher; // 발행기관
 
