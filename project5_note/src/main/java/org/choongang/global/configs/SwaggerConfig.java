@@ -6,14 +6,14 @@ import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@OpenAPIDefinition(info=@Info(title="게시판 API", description = "게시판 기능 정의 명세"))
+@OpenAPIDefinition(info=@Info(title="노트 API", description = "노트 기능 정의 명세"))
 @Configuration
 public class SwaggerConfig {
 
     @Bean
     public GroupedOpenApi apiGroup() {
         return GroupedOpenApi.builder()
-                .group("게시판 API v1")
+                .group("노트 API v1")
                 .pathsToMatch("/**")
                 .build();
     }
