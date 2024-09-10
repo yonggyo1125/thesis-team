@@ -41,7 +41,10 @@ public class NoteData extends BaseEntity {
 
     @Column(length=40, nullable = false)
     private String username; // 로그인 회원명
-    
+
+    @Transient
+    private boolean editable; // 수정, 삭제 가능 여부
+
     @Transient
     private List<FileInfo> editorImages; // 에디터 이미지 
     
