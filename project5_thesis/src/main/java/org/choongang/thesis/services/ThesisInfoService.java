@@ -1,10 +1,12 @@
 package org.choongang.thesis.services;
 
 import com.querydsl.core.BooleanBuilder;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.choongang.file.entities.FileInfo;
 import org.choongang.file.services.FileInfoService;
 import org.choongang.global.ListData;
+import org.choongang.global.Pagination;
 import org.choongang.thesis.constants.Category;
 import org.choongang.thesis.controllers.RequestThesis;
 import org.choongang.thesis.controllers.ThesisSearch;
@@ -22,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.data.domain.Sort.Order.desc;
 
@@ -31,6 +35,7 @@ import static org.springframework.data.domain.Sort.Order.desc;
 public class ThesisInfoService {
     private final ThesisRepository thesisRepository;
     private final FileInfoService fileInfoService;
+    private final HttpServletRequest request;
     private final ModelMapper modelMapper;
 
     public Thesis get(Long tid) {
@@ -79,7 +84,13 @@ public class ThesisInfoService {
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(desc("createdAt")));
         Page<Thesis> data = thesisRepository.findAll(andBuilder, pageable);
 
-        return null;
+        long total = data.getTotalElements();
+        Pagination pagination = new Pagination(page, (int)total, 10, limit, request);
+
+        List<Thesis> items = data.getContent();
+        items.forEach(this::addInfo);
+
+        return new ListData<>(items, pagination);
     }
 
     // 추가 정보 처리
@@ -91,5 +102,8 @@ public class ThesisInfoService {
         List<FileInfo> files = fileInfoService.getList(item.getGid());
         item.setFileInfo(files == null || files.isEmpty() ? null : files.get(0));
 
+        // 학문 분류 처리
+        List<Field> fields = item.getFields();
+        Map<String, String[]> _fields = fields == null || fields.isEmpty() ? null : fields.stream().collect(Collectors.toMap(Field::getId, f -> new String[]{f.getName(), f.getSubfield()}));
     }
 }
