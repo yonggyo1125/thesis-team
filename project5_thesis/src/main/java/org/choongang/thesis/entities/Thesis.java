@@ -57,6 +57,9 @@ public class Thesis extends BaseMemberEntity {
     @Column(length=20)
     private String language; // 언어
 
+    @Column(length=40)
+    private String country; // 국가
+
     @Column(length=40, nullable = false)
     private String userName; // 회원명
 
