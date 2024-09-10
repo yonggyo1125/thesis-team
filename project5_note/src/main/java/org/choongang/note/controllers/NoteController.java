@@ -63,6 +63,31 @@ public class NoteController {
         HttpStatus status = method.equals("PATCH") ? HttpStatus.OK : HttpStatus.CREATED;
         return ResponseEntity.status(status).build();
     }
+    
+    @Operation(summary = "노트 한개 조회", method="GET")
+    @ApiResponse(responseCode = "200")
+    @Parameter(name="noteSeq", required = true, description = "경로변수, 노트 작성 번호")
+    @GetMapping("/info/{noteSeq}")
+    public JSONData info(@PathVariable("noteSeq") Long noteSeq) {
+        return null;        
+    }
 
+    @Operation(summary = "노트 목록", method="GET")
+    @ApiResponse(responseCode = "200")
+    @Parameters({
+            @Parameter(name = "nid", required = true, description = "경로변수, 노트 설정 아이디")
+    })
+    @GetMapping("/list/{nid}")
+    public JSONData list(@PathVariable("nid") String nid) {
 
+        return null;
+    }
+
+    @Operation(summary = "노트 삭제", method="DELETE")
+    @ApiResponse(responseCode = "200")
+    @Parameter(name="noteSeq", required = true, description = "경로변수, 노트 작성 번호")
+    @DeleteMapping("/{noteSeq}")
+    public void delete(@PathVariable("noteSeq") Long noteSeq) {
+
+    }
 }
