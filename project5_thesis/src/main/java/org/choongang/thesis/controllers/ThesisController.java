@@ -42,6 +42,9 @@ public class ThesisController {
     @PatchMapping("/update/{tid}")
     public ResponseEntity<Void> update(@PathVariable("tid") Long tid, @Valid @RequestBody RequestThesis form, Errors errors) {
 
+        form.setMode("update");
+        form.setTid(tid);
+
         return save(form, errors);
     }
 
