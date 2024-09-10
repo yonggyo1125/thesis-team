@@ -3,6 +3,7 @@ package org.choongang.thesis.services;
 import lombok.RequiredArgsConstructor;
 import org.choongang.file.entities.FileInfo;
 import org.choongang.file.services.FileInfoService;
+import org.choongang.global.ListData;
 import org.choongang.thesis.constants.Category;
 import org.choongang.thesis.controllers.RequestThesis;
 import org.choongang.thesis.entities.Field;
@@ -44,6 +45,11 @@ public class ThesisInfoService {
         }
 
         return form;
+    }
+
+    public ListData getList() {
+
+        return null;
     }
 
     // 추가 정보 처리
