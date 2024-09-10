@@ -1,6 +1,7 @@
 package org.choongang.thesis.services;
 
 import lombok.RequiredArgsConstructor;
+import org.choongang.file.entities.FileInfo;
 import org.choongang.file.services.FileInfoService;
 import org.choongang.thesis.constants.Category;
 import org.choongang.thesis.controllers.RequestThesis;
@@ -47,6 +48,11 @@ public class ThesisInfoService {
 
     // 추가 정보 처리
     private void addInfo(Thesis item) {
+        Category category = item.getCategory();
+        item.set_category(category == null ? null : category.getTitle());
 
+        // 논문 파일
+        List<FileInfo> files = fileInfoService.getList(item.getGid());
+        item.setFileInfo(files == null || files.isEmpty() ? null : files.get(0));
     }
 }
