@@ -36,9 +36,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.domain.Sort.Order.desc;
@@ -225,16 +223,16 @@ public class ThesisInfoService {
         System.out.println("search : " + search);
         List<String> sopts = search.getSopts();
         List<String> skeys = search.getSkeys();
-        List<String> operators = search.getOperators();
-        BooleanBuilder _builder = new BooleanBuilder();
-        BooleanBuilder _orBuilder = null;
-        System.out.printf("sopts: %s, skeys: %s, operators: %s%n", sopts, skeys, operators);
+        List<String> operators = Objects.requireNonNullElse(search.getOperators(), new ArrayList<>());
+        operators.add(0, "AND");
+        BooleanBuilder _orBuilder = new BooleanBuilder();
+
         if (sopts != null && !sopts.isEmpty()) {
-            String prevOperator = "";
+            List<Map<String, BooleanExpression>> data = new ArrayList<>();
             for (int i = 0; i < sopts.size(); i++) {
                 String _sopt = sopts.get(i);
                 String _skey = skeys.get(i);
-                String operator = operators == null || operators.isEmpty() || operators.size() < i + 1 ? null : operators.get(i);
+                String operator = operators.get(i);
 
                 if (!StringUtils.hasText(_sopt) || !StringUtils.hasText(_skey)) continue;
 
@@ -254,27 +252,17 @@ public class ThesisInfoService {
                 }
 
                 BooleanExpression condition = expression.contains(_skey.trim());
-                if (operator != null) {
-                    if (operator.equals("AND") || operator.equals("NOT")) {
+                Map<String, BooleanExpression> c = new HashMap<>();
+                c.put(operator, condition);
+                data.add(c);
+            }
 
-                        if (prevOperator.equals("OR")) {
-                            andBuilder.and(_orBuilder);
-                            _orBuilder = new BooleanBuilder();
-                        }
+            for (Map<String, BooleanExpression> item : data) {
+                for (Map.Entry<String, BooleanExpression> entry : item.entrySet()) {
 
-                        if (operator.equals("NOT")) condition = condition.not();
-
-                        andBuilder.and(condition);
-
-                    } else if (operator.equals("OR")) {
-                        _orBuilder.or(condition);
-                    }
                 }
-
-                prevOperator = operator;
             }
         }
-        andBuilder.and(_builder);
 
         /* 고급 검색 처리 E */
 
