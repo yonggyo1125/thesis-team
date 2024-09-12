@@ -222,6 +222,7 @@ public class ThesisInfoService {
         /* 검색 처리 E */
 
         /* 고급 검색 처리 S */
+        System.out.println("search : " + search);
         List<String> sopts = search.getSopts();
         List<String> skeys = search.getSkeys();
         List<String> operators = search.getOperators();
@@ -249,7 +250,7 @@ public class ThesisInfoService {
                     expression = thesis.language;
                 }
 
-                BooleanExpression condition = expression.contains(skey.trim());
+                BooleanExpression condition = expression.contains(_skey.trim());
 
                 if (searchCnt == 0) { // 첫 검색 조건 - AND 조건
                     _builder.and(condition);
@@ -270,6 +271,7 @@ public class ThesisInfoService {
                     }
                     else {
                         if (_orBuilder == null) _orBuilder = new BooleanBuilder();
+                        System.out.println("condition : " + condition);
                         _orBuilder.or(condition);
                     }
                 }
