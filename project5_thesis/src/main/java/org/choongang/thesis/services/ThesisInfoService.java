@@ -228,11 +228,14 @@ public class ThesisInfoService {
         List<String> operators = search.getOperators();
         BooleanBuilder _builder = new BooleanBuilder();
         BooleanBuilder _orBuilder = null;
+        System.out.printf("sopts: %s, skeys: %s, operators: %s%n", sopts, skeys, operators);
         if (sopts != null && !sopts.isEmpty()) {
-            int searchCnt = 0;
+            String prevOperator = "";
             for (int i = 0; i < sopts.size(); i++) {
                 String _sopt = sopts.get(i);
                 String _skey = skeys.get(i);
+                String operator = operators == null || operators.isEmpty() || operators.size() < i + 1 ? null : operators.get(i);
+
                 if (!StringUtils.hasText(_sopt) || !StringUtils.hasText(_skey)) continue;
 
                 StringExpression expression = null;
@@ -251,31 +254,24 @@ public class ThesisInfoService {
                 }
 
                 BooleanExpression condition = expression.contains(_skey.trim());
-
-                if (searchCnt == 0) { // 첫 검색 조건 - AND 조건
-                    _builder.and(condition);
-                } else {
-                    if (operators.size() < i) continue;
-
-                    String operator = operators.get(i - 1);
+                if (operator != null) {
                     if (operator.equals("AND") || operator.equals("NOT")) {
-                        if (operator.equals("NOT")) {
-                            condition = condition.not();
+
+                        if (prevOperator.equals("OR")) {
+                            andBuilder.and(_orBuilder);
+                            _orBuilder = new BooleanBuilder();
                         }
 
-                        _builder.and(condition);
-                        if (_orBuilder != null) {
-                            _builder.and(_orBuilder);
-                            _orBuilder = null;
-                        }
-                    }
-                    else {
-                        if (_orBuilder == null) _orBuilder = new BooleanBuilder();
-                        System.out.println("condition : " + condition);
+                        if (operator.equals("NOT")) condition = condition.not();
+
+                        andBuilder.and(condition);
+
+                    } else if (operator.equals("OR")) {
                         _orBuilder.or(condition);
                     }
                 }
-                searchCnt++;
+
+                prevOperator = operator;
             }
         }
         andBuilder.and(_builder);
