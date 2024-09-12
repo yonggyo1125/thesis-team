@@ -220,11 +220,16 @@ public class ThesisInfoService {
         /* 검색 처리 E */
 
         /* 고급 검색 처리 S */
-        System.out.println("search : " + search);
         List<String> sopts = search.getSopts();
         List<String> skeys = search.getSkeys();
         List<String> operators = Objects.requireNonNullElse(search.getOperators(), new ArrayList<>());
-        BooleanBuilder _orBuilder = new BooleanBuilder();
+        if (operators.size() > 0) {
+            int index = operators.indexOf("OR");
+            if (index == -1) operators.add("AND");
+            else operators.add(index, "OR");
+        } else {
+            operators.add("AND");
+        }
 
         if (sopts != null && !sopts.isEmpty()) {
             List<Map<String, BooleanExpression>> data = new ArrayList<>();
@@ -255,29 +260,45 @@ public class ThesisInfoService {
                 c.put(operator, condition);
                 data.add(c);
             }
-            operators.add("AND");
 
             String prevOperator = "";
             BooleanBuilder orBuilder = new BooleanBuilder();
+            int i = 0;
             for (Map<String, BooleanExpression> item : data) {
                 for (Map.Entry<String, BooleanExpression> entry : item.entrySet()) {
                     String operator = entry.getKey();
                     BooleanExpression condition = entry.getValue();
-                    if (StringUtils.hasText(prevOperator) && !prevOperator.equals("OR")) {
+                    if (prevOperator.equals("OR") &&  !operator.equals("OR")) {
                         andBuilder.and(orBuilder);
+
                         orBuilder = new BooleanBuilder();
                     }
 
-                    if (operator.equals("AND")) {
-                        andBuilder.and(condition);
-                    } else if (operator.equals("NOT")) {
-                        andBuilder.and(condition.not());
+                    if (operator.equals("NOT")) {
+                        condition = condition.not();
+                    }
+
+                    if (operator.equals("AND") || operator.equals("NOT")) {
+                        // 바로 다름 operator가 OR이면 orBuilder로 변경
+                        String nextOperator = "";
+                        try {
+                             nextOperator = operators.get(i + 1);
+                        } catch (Exception e) {}
+                        if (nextOperator.equals("OR")) {
+                            orBuilder.or(condition);
+                        } else {
+                            andBuilder.and(condition);
+                        }
                     } else if (operator.equals("OR")) {
                         orBuilder.or(condition);
                     }
 
                     prevOperator = operator;
+                    i++;
                 }
+            }
+            if (prevOperator.equals("OR")) {
+                andBuilder.and(orBuilder);
             }
         }
 
