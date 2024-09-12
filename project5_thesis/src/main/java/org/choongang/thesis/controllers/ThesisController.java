@@ -15,6 +15,7 @@ import org.choongang.thesis.entities.Thesis;
 import org.choongang.thesis.services.ThesisDeleteService;
 import org.choongang.thesis.services.ThesisInfoService;
 import org.choongang.thesis.services.ThesisSaveService;
+import org.choongang.thesis.services.ThesisViewService;
 import org.choongang.thesis.validators.ThesisValidator;
 import org.choongang.thesisAdvance.services.UserLogService;
 import org.springframework.http.HttpStatus;
@@ -34,7 +35,7 @@ public class ThesisController {
     private final ThesisSaveService thesisSaveService;
     private final ThesisDeleteService thesisDeleteService;
     private final ThesisInfoService thesisInfoService;
-
+    private final ThesisViewService thesisViewService;
     private final Utils utils;
     private final UserLogService userLogService;
 
@@ -94,9 +95,13 @@ public class ThesisController {
     @GetMapping("/info/{tid}")
     @PreAuthorize("permitAll()")
     public JSONData info(@PathVariable("tid") Long tid) {
+        thesisViewService.updateViewCount(tid);
+        thesisViewService.dailylog(tid);
+
         Thesis item = thesisInfoService.get(tid);
 
         userLogService.save(tid);//조회한 논문 번호 저장
+
 
         return new JSONData(item);
 

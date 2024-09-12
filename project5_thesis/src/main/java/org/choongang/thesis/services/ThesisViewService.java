@@ -3,9 +3,8 @@ package org.choongang.thesis.services;
 import lombok.RequiredArgsConstructor;
 import org.choongang.global.Utils;
 import org.choongang.member.MemberUtil;
-import org.choongang.thesis.entities.Field;
-import org.choongang.thesis.entities.Thesis;
-import org.choongang.thesis.entities.ThesisViewDaily;
+import org.choongang.thesis.entities.*;
+import org.choongang.thesis.repositories.ThesisRepository;
 import org.choongang.thesis.repositories.ThesisViewDailyRepository;
 import org.choongang.thesis.repositories.ThesisViewRepository;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,7 @@ public class ThesisViewService {
     private final ThesisViewDailyRepository dailyRepository;
     private final ThesisViewRepository repository;
     private final ThesisInfoService infoService;
+    private final ThesisRepository thesisRepository;
     private final MemberUtil memberUtil;
     private final Utils utils;
 
@@ -44,7 +44,25 @@ public class ThesisViewService {
         } catch (Exception e) {}
     }
 
-    public void updateViewCont(Long tid) {
+    public void updateViewCount(Long tid) {
+        try {
+            Thesis item = infoService.get(tid);
+
+            int uid = memberUtil.isLogin() ? Objects.hash(memberUtil.getMember().getEmail()) : utils.guestUid();
+
+            ThesisView view = new ThesisView();
+            view.setTid(tid);
+            view.setUid(uid);
+
+            repository.saveAndFlush(view);
+
+            QThesisView thesisView = QThesisView.thesisView;
+            long total = repository.count(thesisView.tid.eq(tid)); // 조회수
+            item.setViewCount((int)total);
+            thesisRepository.saveAndFlush(item);
+
+        } catch (Exception e) {}
+
 
     }
 }
