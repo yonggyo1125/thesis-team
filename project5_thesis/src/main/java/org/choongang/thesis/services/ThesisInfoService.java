@@ -224,7 +224,6 @@ public class ThesisInfoService {
         List<String> sopts = search.getSopts();
         List<String> skeys = search.getSkeys();
         List<String> operators = Objects.requireNonNullElse(search.getOperators(), new ArrayList<>());
-        operators.add(0, "AND");
         BooleanBuilder _orBuilder = new BooleanBuilder();
 
         if (sopts != null && !sopts.isEmpty()) {
@@ -256,10 +255,28 @@ public class ThesisInfoService {
                 c.put(operator, condition);
                 data.add(c);
             }
+            operators.add("AND");
 
+            String prevOperator = "";
+            BooleanBuilder orBuilder = new BooleanBuilder();
             for (Map<String, BooleanExpression> item : data) {
                 for (Map.Entry<String, BooleanExpression> entry : item.entrySet()) {
+                    String operator = entry.getKey();
+                    BooleanExpression condition = entry.getValue();
+                    if (StringUtils.hasText(prevOperator) && !prevOperator.equals("OR")) {
+                        andBuilder.and(orBuilder);
+                        orBuilder = new BooleanBuilder();
+                    }
 
+                    if (operator.equals("AND")) {
+                        andBuilder.and(condition);
+                    } else if (operator.equals("NOT")) {
+                        andBuilder.and(condition.not());
+                    } else if (operator.equals("OR")) {
+                        orBuilder.or(condition);
+                    }
+
+                    prevOperator = operator;
                 }
             }
         }
