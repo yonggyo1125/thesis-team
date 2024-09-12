@@ -1,59 +1,57 @@
-//package org.choongang.thesisAdvance.services;
-//
-//import lombok.RequiredArgsConstructor;
-//import org.choongang.thesis.entities.UserLog;
-//import org.choongang.thesis.repositories.UserLogRepository;
-//import org.choongang.thesisAdvance.controllers.TrendSearch;
-//import org.springframework.stereotype.Service;
-//
-//import java.time.LocalDate;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.stream.Collectors;
-//
-//@Service
-//@RequiredArgsConstructor
-//public class TrendInfoService {
-//    private final UserLogRepository userLogRepository;
-//    private final MemberService memberService;
-//
-//    public List<String> getPopluarKeywords(String email, LocalDate sDate, LocalDate eDate) {
-//        // 1. 직업 조회
-//        List<String> job = memberService.getJobByEmails(email);
-//
-//        // 2. 조회한 직업과 기간을 기준으로 검색 기록 조회
-//        TrendSearch trendSearch = new TrendSearch();
-//        List<UserLog> userLogs = userLogRepository.findByJobInSearchDateBetween(job, sDate.atStartOfDay(), eDate.atTime(23, 59, 59));
-//
-//        // 3. 검색어 빈도 계산
-//        Map<String, Long> keywordFrequency = userLogs.stream()
-//                .collect(Collectors.groupingBy(UserLog::getSearch, Collectors.counting()));
-//
-//        // 4. 빈도수 기준으로 검색어 정렬
-//        return keywordFrequency.entrySet().stream()
-//                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-//                .map(Map.Entry::getKey)
-//                .collect(Collectors.toList());
-//    }
-//
-//    /* 이메일로 조회
-//    public List<String> getPopluarKeywords(String job, LocalDate sDate, LocalDate eDate) {
-//        // 1. RestTemplate을 통해 직업군에 속한 회원 이메일을 외부 서비스에서 조회
-//        List<String> emails = memberService.getEmailsByJob(job);
-//
-//        // 2. 조회한 이메일과 기간을 기준으로 검색 기록 조회
-//        TrendSearch trendSearch = new TrendSearch();
-//        List<UserLog> userLogs = userLogRepository.findByEmailInAndSearchDateBetween(emails, sDate.atStartOfDay(), eDate.atTime(23, 59, 59));
-//
-//        // 3. 검색어 빈도 계산
-//        Map<String, Long> keywordFrequency = userLogs.stream()
-//                .collect(Collectors.groupingBy(UserLog::getSearch, Collectors.counting()));
-//
-//        // 4. 빈도수 기준으로 검색어 정렬
-//        return keywordFrequency.entrySet().stream()
-//                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-//                .map(Map.Entry::getKey)
-//                .collect(Collectors.toList());
-//    }*/
-//}
-//
+package org.choongang.thesisAdvance.services;
+
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
+import org.choongang.thesis.entities.QUserLog;
+import org.choongang.thesisAdvance.controllers.TrendSearch;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Service
+@RequiredArgsConstructor
+public class TrendInfoService {
+
+    private final JPAQueryFactory queryFactory;
+
+    public List<Map<String, Object>> getKeywordRankingByJob(TrendSearch search) {
+        LocalDate sDate = search.getSDate();
+        LocalDate eDate = search.getEDate();
+        QUserLog userLog = QUserLog.userLog;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        if (sDate != null) {
+            builder.and(userLog.searchDate.after(sDate.atStartOfDay()));
+        }
+
+        if (eDate != null) {
+            builder.and(userLog.searchDate.before(eDate.atTime(LocalTime.MAX)));
+        }
+
+        List<Tuple> items = queryFactory.select(userLog.job, userLog.search.count(), userLog.search)
+                .from(userLog)
+                .groupBy(userLog.job, userLog.search)
+                .orderBy(userLog.search.count().desc())
+                .fetch();
+
+        if (items != null && !items.isEmpty()) {
+            return items.stream().map(t -> {
+                Map<String, Object> data = new HashMap<>();
+                data.put("job", t.get(userLog.job));
+                data.put("count", t.get(userLog.search.count()));
+                data.put("search", t.get(userLog.search));
+                return data;
+            }).toList();
+        }
+
+        return Collections.EMPTY_LIST;
+    }
+}
+

@@ -15,6 +15,8 @@ public class Member {
 
     private String email;
 
+    private String job;
+
     private String password;
 
     private String userName;
