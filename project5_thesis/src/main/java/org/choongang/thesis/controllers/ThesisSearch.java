@@ -1,14 +1,14 @@
 package org.choongang.thesis.controllers;
 
 import lombok.Data;
-import org.choongang.global.CommonSearch;
+import org.choongang.global.AdvancedSearch;
 import org.choongang.thesis.constants.ApprovalStatus;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
-public class ThesisSearch extends CommonSearch {
+public class ThesisSearch extends AdvancedSearch {
     private List<String> category;
     private List<String> fields;
     private ApprovalStatus approvalStatus; //승인 상태 필드
@@ -26,4 +26,6 @@ public class ThesisSearch extends CommonSearch {
     private String country; // 국가
 
     private String sort; //정렬 조건
+
+
 }

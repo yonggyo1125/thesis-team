@@ -3,6 +3,7 @@ package org.choongang.thesis.services;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.EnumExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.StringExpression;
@@ -219,6 +220,65 @@ public class ThesisInfoService {
 
         }
         /* 검색 처리 E */
+
+        /* 고급 검색 처리 S */
+        List<String> sopts = search.getSopts();
+        List<String> skeys = search.getSkeys();
+        List<String> operators = search.getOperators();
+        BooleanBuilder _builder = new BooleanBuilder();
+        BooleanBuilder _orBuilder = null;
+        if (sopts != null && !sopts.isEmpty()) {
+            int searchCnt = 0;
+            for (int i = 0; i < sopts.size(); i++) {
+                String _sopt = sopts.get(i);
+                String _skey = skeys.get(i);
+                if (!StringUtils.hasText(_sopt) || !StringUtils.hasText(_skey)) continue;
+
+                StringExpression expression = null;
+                if (_sopt.equals("poster")) {
+                    expression = thesis.poster;
+                } else if (_sopt.equals("title")) {
+                    expression = thesis.title;
+                } else if (_sopt.equals("thAbstract")) {
+                    expression = thesis.thAbstract;
+                } else if (_sopt.equals("reference")) {
+                    expression = thesis.reference;
+                } else if (_sopt.equals("publisher")) {
+                    expression = thesis.publisher;
+                } else if (_sopt.equals("language")) {
+                    expression = thesis.language;
+                }
+
+                BooleanExpression condition = expression.contains(skey.trim());
+
+                if (searchCnt == 0) { // 첫 검색 조건 - AND 조건
+                    _builder.and(condition);
+                } else {
+                    if (operators.size() < i) continue;
+
+                    String operator = operators.get(i - 1);
+                    if (operator.equals("AND") || operator.equals("NOT")) {
+                        if (operator.equals("NOT")) {
+                            condition = condition.not();
+                        }
+
+                        _builder.and(condition);
+                        if (_orBuilder != null) {
+                            _builder.and(_orBuilder);
+                            _orBuilder = null;
+                        }
+                    }
+                    else {
+                        if (_orBuilder == null) _orBuilder = new BooleanBuilder();
+                        _orBuilder.or(condition);
+                    }
+                }
+                searchCnt++;
+            }
+        }
+        andBuilder.and(_builder);
+
+        /* 고급 검색 처리 E */
 
         // 정렬 처리 S, -> 목록 조회 처리 추가 필요함
         String sort = search.getSort();
