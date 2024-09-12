@@ -26,7 +26,7 @@ public class TrendController {
     @GetMapping("/popular")
     @PreAuthorize("permitAll()")
     public JSONData getKeywordByJob(@ModelAttribute TrendSearch search){
-        List<Map<String, Object>> items = trendInfoService.getKeywordRankingByJob(search)
+        List<Map<String, Object>> items = trendInfoService.getKeywordRankingByJob(search);
 
         return new JSONData(items);
     }

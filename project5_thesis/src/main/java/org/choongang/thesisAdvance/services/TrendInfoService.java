@@ -24,8 +24,9 @@ public class TrendInfoService {
     public List<Map<String, Object>> getKeywordRankingByJob(TrendSearch search) {
         LocalDate sDate = search.getSDate();
         LocalDate eDate = search.getEDate();
-        QUserLog userLog = QUserLog.userLog;
+        List<String> job = search.getJob();
 
+        QUserLog userLog = QUserLog.userLog;
         BooleanBuilder builder = new BooleanBuilder();
         if (sDate != null) {
             builder.and(userLog.searchDate.after(sDate.atStartOfDay()));
@@ -33,6 +34,10 @@ public class TrendInfoService {
 
         if (eDate != null) {
             builder.and(userLog.searchDate.before(eDate.atTime(LocalTime.MAX)));
+        }
+
+        if (job != null && !job.isEmpty()) {
+            builder.and(userLog.job.in(job));
         }
 
         List<Tuple> items = queryFactory.select(userLog.job, userLog.search.count(), userLog.search)
