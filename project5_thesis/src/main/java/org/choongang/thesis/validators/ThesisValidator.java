@@ -5,10 +5,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
 @Component
 public class ThesisValidator implements Validator {
-
     @Override
     public boolean supports(Class<?> clazz) {
         return clazz.isAssignableFrom(RequestThesis.class);
@@ -25,7 +23,7 @@ public class ThesisValidator implements Validator {
         Long tid = form.getTid();
         String mode = form.getMode();
         mode = StringUtils.hasText(mode) ? mode : "register";
-        if (mode.equals("update") && (tid == null || tid < 1L)) {
+        if(mode.equals("update") && (tid == null || tid < 1L)){
             errors.rejectValue("tid", "NotBlank");
         }
     }

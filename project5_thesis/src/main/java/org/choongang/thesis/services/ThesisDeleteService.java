@@ -23,19 +23,35 @@ public class ThesisDeleteService {
     public void delete(Long tid) {
         Thesis thesis = thesisRepository.findById(tid).orElseThrow(ThesisNotFoundException::new);
 
-        // 학문 분야 분류 삭제
+        //학문 분야 분류 삭제
         List<Field> fields = thesis.getFields();
-        if (fields != null && !fields.isEmpty()) {
+        if(fields != null && !fields.isEmpty()) {
             fieldRepository.deleteAll(fields);
             fieldRepository.flush();
         }
-        // 논문 PDF 파일 삭제
+
+        //논문 PDF 파일 삭제
         String gid = thesis.getGid();
         deleteService.delete(gid);
-
-        // 논문 삭제
-
+        //논문 삭제
         thesisRepository.delete(thesis);
+        thesisRepository.flush();
+    }
+    public void deleteList(List<Long> tids) {
+        for(Long tid : tids) {
+            Thesis thesis = thesisRepository.findById(tid).orElseThrow(ThesisNotFoundException::new);
+            //학문 분야 분류 삭제
+            List<Field> fields = thesis.getFields();
+            if (fields != null && !fields.isEmpty()) {
+                fieldRepository.deleteAll(fields);
+            }
+            // 논문 PDF 파일 삭제
+            String gid = thesis.getGid();
+            deleteService.delete(gid);
+
+            // 논문 삭제
+            thesisRepository.delete(thesis);
+        }
         thesisRepository.flush();
     }
 }

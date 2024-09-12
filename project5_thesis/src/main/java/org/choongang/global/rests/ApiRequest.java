@@ -1,5 +1,6 @@
 package org.choongang.global.rests;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class ApiRequest {
 
                 this.response = restTemplate.exchange(URI.create(requestUrl), method, request, JSONData.class);
 
-            } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
         } else { // GET 또는 DELETE 방식인 경우
@@ -96,7 +97,7 @@ public class ApiRequest {
             if (StringUtils.hasText(body)) {
                 return om.readValue(body, clazz);
             }
-        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return null;
@@ -117,7 +118,7 @@ public class ApiRequest {
             if (StringUtils.hasText(body)) {
                 return om.readValue(body, typeReference);
             }
-        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return null;

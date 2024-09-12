@@ -14,7 +14,7 @@ import org.choongang.global.entities.BaseEntity;
 @AllArgsConstructor
 public class CommentData extends BaseEntity {
     @Id @GeneratedValue
-    private Long col;
+    private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Thesis thesis;

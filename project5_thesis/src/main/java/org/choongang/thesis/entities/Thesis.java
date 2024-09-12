@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.choongang.file.entities.FileInfo;
 import org.choongang.global.entities.BaseMemberEntity;
+import org.choongang.thesis.constants.ApprovalStatus;
 import org.choongang.thesis.constants.Category;
 
 import java.util.List;
@@ -23,8 +24,11 @@ public class Thesis extends BaseMemberEntity {
     private Long tid;
 
     @Enumerated(EnumType.STRING)
-    @Column(length=20, nullable = false)
+    @Column(length = 20, nullable = false)
     private Category category;
+
+    @Enumerated(EnumType.STRING)
+    private ApprovalStatus approvalStatus = ApprovalStatus.PENDING;
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
@@ -46,8 +50,8 @@ public class Thesis extends BaseMemberEntity {
 
     @Column(length=65, nullable = false)
     private String gid; // 그룹 ID
+
     private boolean visible; //  공개 여부
-    private boolean approval; // 승인 여부
 
     private int viewCount; // 조회수
 
@@ -57,10 +61,13 @@ public class Thesis extends BaseMemberEntity {
     @Lob
     private String toc; // 목차
 
+    @Lob
+    private String keywords; // 키워드
+
     @Column(length=20)
     private String language; // 언어
 
-    @Column(length=40)
+    @Column(length = 40)
     private String country; // 국가
 
     @Column(length=40, nullable = false)
@@ -69,12 +76,17 @@ public class Thesis extends BaseMemberEntity {
     @Column(length=80, nullable = false)
     private String email; // 이메일
 
+    @Lob
+    private String rejectedReason; // 반려 사유
+
+
     @Transient
     private FileInfo fileInfo;
 
     @Transient
-    private String _category; // 문자열 분류명
+    private String _category; //문자열 분류명
 
     @Transient
-    private Map<String, String[]> _fields; // 학문 분류, id, name, subfield
+    private Map<String, String[]> _fields;
+
 }

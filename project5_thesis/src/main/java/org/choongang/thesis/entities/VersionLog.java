@@ -7,24 +7,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.choongang.global.entities.BaseMemberEntity;
 
-@Data
 @Entity
+@Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 public class VersionLog extends BaseMemberEntity {
     @Id @GeneratedValue
     private Long logSeq;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="tid")
+    @JoinColumn(name = "tid")
     private Thesis thesis;
-    private int major; // 주버전
-    private int minor; // 부버전
+    private int major; //주버전
+    private int minor; //부버전
 
     @Lob
-    private String before; // 변경전 데이터
+    private String before;
 
     @Lob
-    private String after; // 변경 후 데이터
+    private String after;
+
 }
