@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.choongang.global.Utils;
+import org.choongang.global.tests.TestTokenService;
+import org.choongang.member.constants.Authority;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -15,11 +18,16 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
+@Setter
 @RequiredArgsConstructor
 public class ApiRequest {
     private final RestTemplate restTemplate;
     private final ObjectMapper om;
     private final Utils utils;
+    private final TestTokenService tokenService;
+
+    private boolean test;
+    private Authority authority;
 
     private ResponseEntity<JSONData> response;
     private JSONData jsonData;
@@ -34,11 +42,11 @@ public class ApiRequest {
 
     public ApiRequest request(String url, String serviceId, HttpMethod method, Object data) {
         String requestUrl = utils.url(url, serviceId);
-        System.out.println("requestUrl:" + requestUrl);
         method = Objects.requireNonNullElse(method, HttpMethod.GET);
 
         HttpHeaders headers = new HttpHeaders();
-        String token = utils.getToken();
+        String token = test ? tokenService.getToken(Objects.requireNonNullElse(authority, Authority.USER)) : utils.getToken();
+        test = false;
         if (StringUtils.hasText(token)) { // 토큰이 있다면 토큰 함께 전달
             headers.setBearerAuth(token);
         }

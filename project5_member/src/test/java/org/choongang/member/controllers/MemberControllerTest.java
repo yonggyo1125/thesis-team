@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.choongang.global.Utils;
 import org.choongang.global.exceptions.BadRequestException;
 import org.choongang.global.rests.ApiRequest;
+import org.choongang.global.tests.TestTokenService;
+import org.choongang.member.constants.Authority;
 import org.choongang.member.constants.Gender;
 import org.choongang.member.constants.Job;
 import org.choongang.member.entities.Member;
@@ -12,7 +14,6 @@ import org.choongang.member.repositories.MemberRepository;
 import org.choongang.member.services.MemberInfoService;
 import org.choongang.member.services.MemberSaveService;
 import org.choongang.thisis.entities.Field;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,8 @@ public class MemberControllerTest {
 
     @Autowired
     private ObjectMapper om;
+
+    private TestTokenService tokenService;
 
     @Autowired
     private MemberSaveService saveService;
@@ -106,8 +109,11 @@ public class MemberControllerTest {
     void joinTest() throws Exception {
         String params = om.writeValueAsString(form);
 
+        String token = tokenService.getToken(Authority.USER);
+
         mockMvc.perform(post("/account")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authentication", "Bearer " + token)
                         .characterEncoding(Charset.forName("UTF-8"))
                         .content(params))
                 .andDo(print());
@@ -129,5 +135,11 @@ public class MemberControllerTest {
         Job job = memberInfoService.getJobByEmail(email);
         assertEquals(Job.PROFESSOR, job);
         System.out.println(job);
+    }
+
+    @Test
+    void test2() {
+        apiRequest.setTest(true);
+        ApiRequest result = apiRequest.request("/account", "member-service");
     }
 }
