@@ -27,6 +27,7 @@ public class ThesisViewDaily { //기간 조회, 통계에 사용->하루 지나�
     private int uid;
 
     @Id
+    @Column(name="dailyDate")
     private LocalDate date;
 
     @Column(length=3000)

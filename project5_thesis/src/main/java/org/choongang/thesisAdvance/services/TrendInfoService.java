@@ -4,23 +4,25 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.choongang.thesis.entities.Field;
+import org.choongang.thesis.entities.QField;
 import org.choongang.thesis.entities.QThesisViewDaily;
 import org.choongang.thesis.entities.QUserLog;
+import org.choongang.thesis.repositories.FieldRepository;
 import org.choongang.thesisAdvance.controllers.TrendSearch;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TrendInfoService {
 
     private final JPAQueryFactory queryFactory;
+    private final FieldRepository fieldRepository;
 
     public List<Map<String, Object>> getKeywordRankingByJob(TrendSearch search) {
         LocalDate sDate = search.getSDate();
@@ -57,7 +59,7 @@ public class TrendInfoService {
         return Collections.EMPTY_LIST;
     }
 
-    public List<Map<String, Object>> getFieldRanking(TrendSearch search) {
+    public Map<String, Map<String, Object>> getFieldRanking(TrendSearch search) {
         LocalDate sDate = search.getSDate();
         LocalDate eDate = search.getEDate();
         if (sDate == null) {
@@ -81,9 +83,33 @@ public class TrendInfoService {
             return null;
         }
 
+        List<String> fieldIds = items.stream().flatMap(s -> Arrays.stream(s.split(","))).distinct().toList();
+        QField field = QField.field;
+        List<Field> fields = (List<Field>)fieldRepository.findAll(field.id.in(fieldIds));
+        Map<String, Map<String, Object>> statData = fields.stream().collect(Collectors.toMap(Field::getId, f -> {
+            Map<String, Object> data = new HashMap<>();
+            data.put("name", f.getName());
+            data.put("subfield", f.getSubfield());
+            data.put("count", 0);
 
+            return data;
+        }));
 
-        return null;
+        for (String item : items) {
+            for (String name : item.split(",")) {
+                Map<String, Object> data = statData.get(name);
+                if (data == null) {
+                    data = new HashMap<>();
+                    data.put("count", 1);
+                } else {
+                    int count = (int)data.getOrDefault("count", 0);
+                    data.put("count", count + 1);
+                }
+                statData.put(name, data);
+            }
+        }
+
+        return statData;
     }
 }
 
