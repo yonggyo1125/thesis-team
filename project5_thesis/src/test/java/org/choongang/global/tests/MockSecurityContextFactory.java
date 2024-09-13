@@ -23,6 +23,7 @@ public class MockSecurityContextFactory implements WithSecurityContextFactory<Mo
     public SecurityContext createSecurityContext(MockMember mockMember) {
 
         Member member = new Member();
+        member.setSeq(1L);
         member.setEmail(mockMember.email());
         member.setPassword(encoder.encode(mockMember.password()));
         member.setUserName(mockMember.userName());
@@ -33,6 +34,7 @@ public class MockSecurityContextFactory implements WithSecurityContextFactory<Mo
         Authorities authorities = new Authorities();
         authorities.setAuthority(mockMember.authority());
         List<Authorities> items = List.of(authorities);
+        member.setAuthorities(items);
 
         List<SimpleGrantedAuthority> _authorities = List.of(new SimpleGrantedAuthority(mockMember.authority().name()));
 

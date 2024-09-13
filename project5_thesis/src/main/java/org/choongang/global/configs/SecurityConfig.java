@@ -37,7 +37,7 @@ public class SecurityConfig {
                 })
                 .authorizeHttpRequests(c -> {
                     c.requestMatchers("/admin/**").hasAnyAuthority("ADMIN");
-                    c.requestMatchers("/interest/**","/field/**","/**").permitAll();
+                    c.requestMatchers("/interest/**","/field/**").permitAll();
                     c.requestMatchers("/apidocs.html", "/swagger-ui/**", "/api-docs/**").permitAll().anyRequest().authenticated();
                 });
 
