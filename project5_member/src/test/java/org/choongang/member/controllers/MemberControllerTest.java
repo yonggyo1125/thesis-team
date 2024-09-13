@@ -109,7 +109,8 @@ public class MemberControllerTest {
     void joinTest() throws Exception {
         String params = om.writeValueAsString(form);
 
-        String token = tokenService.getToken(Authority.USER);
+      tokenService.setApiRequest(apiRequest);
+        String token =  tokenService.getToken(Authority.USER);
 
         mockMvc.perform(post("/account")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -50,6 +50,7 @@ public class ApiRequest {
             test = true;
         }
 
+        tokenService.setApiRequest(this);
         String token = test ? tokenService.getToken(Objects.requireNonNullElse(authority, Authority.USER)) : utils.getToken();
         test = false;
         if (StringUtils.hasText(token)) { // 토큰이 있다면 토큰 함께 전달

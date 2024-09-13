@@ -1,6 +1,6 @@
 package org.choongang.global.tests;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.choongang.global.rests.ApiRequest;
 import org.choongang.member.constants.Authority;
 import org.choongang.member.constants.Gender;
@@ -12,10 +12,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @Service
-@RequiredArgsConstructor
+@Setter
 public class TestTokenService {
-    private final ApiRequest apiRequest;
+    private ApiRequest apiRequest;
+
 
     public String getToken(Authority authority) {
         Map<String, Object> params = new HashMap<>();
