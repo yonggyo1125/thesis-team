@@ -45,6 +45,11 @@ public class ApiRequest {
         method = Objects.requireNonNullElse(method, HttpMethod.GET);
 
         HttpHeaders headers = new HttpHeaders();
+
+        if (System.getenv("spring.profiles.active").contains("test")) {
+            test = true;
+        }
+
         String token = test ? tokenService.getToken(Objects.requireNonNullElse(authority, Authority.USER)) : utils.getToken();
         test = false;
         if (StringUtils.hasText(token)) { // 토큰이 있다면 토큰 함께 전달
