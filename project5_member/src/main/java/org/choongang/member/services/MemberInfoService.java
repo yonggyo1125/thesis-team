@@ -117,7 +117,8 @@ public class MemberInfoService implements UserDetailsService {
 
         List<String> job = search.getJob();
         if (job != null && !job.isEmpty()) {
-            ///andBuilder.and(member.job.in(job));
+            List<Job> _job = job.stream().map(Job::valueOf).toList();
+            andBuilder.and(member.job.in(_job));
         }
 
         /* 검색 처리 E */
