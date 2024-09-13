@@ -85,10 +85,6 @@ public class TrendInfoService {
             return null;
         }
 
-        /* 찜하기 데이터 처리 S */
-
-        /* 찜하기 데이터 처리 E */
-
         List<String> fieldIds = items.stream().flatMap(s -> Arrays.stream(s.get(daily.fields).split(","))).distinct().toList();
 
         QField field = QField.field;
@@ -115,6 +111,26 @@ public class TrendInfoService {
                 statData.put(name, data);
             }
         }
+
+        /* 찜하기 데이터 처리 S */
+        Map<String, Long> wishCounts = new HashMap<>();
+        for (Tuple item : items) {
+            Long tid = item.get(daily.tid);
+            String _fields = item.get(daily.fields);
+            long count = wishListService.getCount(tid);
+            for (String _field : _fields.split(",")) {
+                long _count = wishCounts.getOrDefault(_field, 0L);
+                wishCounts.put(_field, _count + count);
+            }
+        }
+
+        for (Map.Entry<String, Long> entry : wishCounts.entrySet()) {
+            String key = entry.getKey();
+            long count = entry.getValue();
+            Map<String, Object> data = statData.get(key);
+            data.put("wishCount", count);
+        }
+        /* 찜하기 데이터 처리 E */
 
         return statData;
     }
