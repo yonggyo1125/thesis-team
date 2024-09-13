@@ -3,6 +3,8 @@ package org.choongang.member.controllers;
 import lombok.Data;
 import org.choongang.global.CommonSearch;
 
+import java.util.List;
+
 @Data
 public class MemberSearch extends CommonSearch {
     /**
@@ -14,5 +16,5 @@ public class MemberSearch extends CommonSearch {
      */
     private String email;
     private String userName;
-    private String job;
+    private List<String> job;
 }

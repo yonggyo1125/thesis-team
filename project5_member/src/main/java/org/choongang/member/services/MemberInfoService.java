@@ -115,6 +115,10 @@ public class MemberInfoService implements UserDetailsService {
             if (condition != null) andBuilder.and(condition);
         }
 
+        List<String> job = search.getJob();
+        if (job != null && !job.isEmpty()) {
+            ///andBuilder.and(member.job.in(job));
+        }
 
         /* 검색 처리 E */
 
