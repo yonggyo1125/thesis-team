@@ -35,12 +35,9 @@ public class TrendController {
 
     @Operation(summary = "학문 분류별 검색 통계")
     @GetMapping("/popular/field")
-    //@PreAuthorize("permitAll()")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("permitAll()")
     public JSONData getFieldRanking(@ModelAttribute TrendSearch search) {
         Map<String, Map<String, Object>> data = trendInfoService.getFieldRanking(search);
-
-        System.out.printf("isLogin: %s, isAdmin: %s, member: %s%n", memberUtil.isLogin(), memberUtil.isAdmin(), memberUtil.getMember());
 
         return new JSONData(data);
     }
