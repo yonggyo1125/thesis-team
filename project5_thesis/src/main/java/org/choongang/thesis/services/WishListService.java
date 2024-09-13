@@ -12,6 +12,7 @@ import org.choongang.thesis.repositories.WishListRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.data.domain.Sort.Order.desc;
@@ -30,9 +31,8 @@ public class WishListService {
         }
         WishList wishList = WishList.builder()
                 .tid(tid)
-                .email(memberUtil.getMember().getEmail())
                 .build();
-        System.out.println("wishList : "+wishList);
+
         wishListRepository.saveAndFlush(wishList);
     }
 
@@ -40,6 +40,7 @@ public class WishListService {
         if(!memberUtil.isLogin()){
             throw new BadRequestException(utils.getMessage("Login.Required"));
         }
+
         WishListId wishListId = new WishListId(tid,memberUtil.getMember().getEmail());
         wishListRepository.deleteById(wishListId);
         wishListRepository.flush();
@@ -47,13 +48,23 @@ public class WishListService {
     }
 
     public List<Long> getList(){
+        if (!memberUtil.isLogin()) {
+            return Collections.EMPTY_LIST;
+        }
+
         BooleanBuilder builder = new BooleanBuilder();
         QWishList wishList = QWishList.wishList;
-        builder.and(wishList.email.eq("testuser1@email.com"));
+        builder.and(wishList.email.eq(memberUtil.getMember().getEmail()));
 
         List<Long> items = ((List<WishList>)wishListRepository.findAll(builder, Sort.by(desc("createdAt")))).stream().map(WishList::getTid).toList();
 
         return items;
+    }
+
+    public long getCount(Long tid) {
+        QWishList wishList = QWishList.wishList;
+
+        return wishListRepository.count(wishList.tid.eq(tid));
     }
 
 }

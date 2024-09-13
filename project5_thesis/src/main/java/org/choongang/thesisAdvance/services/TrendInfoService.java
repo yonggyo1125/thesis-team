@@ -9,6 +9,7 @@ import org.choongang.thesis.entities.QField;
 import org.choongang.thesis.entities.QThesisViewDaily;
 import org.choongang.thesis.entities.QUserLog;
 import org.choongang.thesis.repositories.FieldRepository;
+import org.choongang.thesis.services.WishListService;
 import org.choongang.thesisAdvance.controllers.TrendSearch;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class TrendInfoService {
 
     private final JPAQueryFactory queryFactory;
     private final FieldRepository fieldRepository;
+    private final WishListService wishListService;
 
     public List<Map<String, Object>> getKeywordRankingByJob(TrendSearch search) {
         LocalDate sDate = search.getSDate();
@@ -74,7 +76,7 @@ public class TrendInfoService {
             builder.and(daily.date.loe(eDate));
         }
 
-        List<String> items = queryFactory.select(daily.fields)
+        List<Tuple> items = queryFactory.select(daily.tid, daily.fields)
                 .from(daily)
                 .where(builder)
                 .fetch();
@@ -83,7 +85,12 @@ public class TrendInfoService {
             return null;
         }
 
-        List<String> fieldIds = items.stream().flatMap(s -> Arrays.stream(s.split(","))).distinct().toList();
+        /* 찜하기 데이터 처리 S */
+
+        /* 찜하기 데이터 처리 E */
+
+        List<String> fieldIds = items.stream().flatMap(s -> Arrays.stream(s.get(daily.fields).split(","))).distinct().toList();
+
         QField field = QField.field;
         List<Field> fields = (List<Field>)fieldRepository.findAll(field.id.in(fieldIds));
         Map<String, Map<String, Object>> statData = fields.stream().collect(Collectors.toMap(Field::getId, f -> {
@@ -95,8 +102,8 @@ public class TrendInfoService {
             return data;
         }));
 
-        for (String item : items) {
-            for (String name : item.split(",")) {
+        for (Tuple item : items) {
+            for (String name : item.get(daily.fields).split(",")) {
                 Map<String, Object> data = statData.get(name);
                 if (data == null) {
                     data = new HashMap<>();
