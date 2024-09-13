@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.choongang.global.Utils;
 import org.choongang.global.exceptions.BadRequestException;
 import org.choongang.thesis.entities.Interests;
-import org.choongang.thesis.exceptions.FieldNotFoundException;
 import org.choongang.thesis.repositories.FieldRepository;
 import org.choongang.thesis.repositories.InterestsRepository;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ public class InterestSaveService {
     private final FieldRepository fieldRepository;
 
     //    관심사 저장
-    public void save(List<String> _interests, String email) {
+    public void save(List<Interests> _interests, String email) {
         if (_interests.isEmpty()) {
             throw new BadRequestException(utils.getMessage("NotBlank.Interests"));
         }
@@ -34,15 +33,7 @@ public class InterestSaveService {
             interestsRepository.deleteByEmail(email);//삭제 후
             interestsRepository.flush();
         }
-        saveInterest(_interests, email);//저장
+        _interests.forEach(interestsRepository::saveAndFlush);
 
-    }
-
-    private void saveInterest(List<String> interests, String email) {
-        interests.forEach(i -> {
-            String fieldId = fieldRepository.findById(i).orElseThrow(FieldNotFoundException::new).getId();
-            Interests interest = new Interests(fieldId, email);
-            interestsRepository.saveAndFlush(interest);
-        });
     }
 }

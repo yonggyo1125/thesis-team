@@ -42,7 +42,7 @@ public class InterestController {
             @Parameter(name = "interests", description = "수정하려는 관심사", example = "[\"S-005\", \"N-004\"]")}
     )
     @PatchMapping("/update/{email}")
-    public ResponseEntity<Void> update(@PathVariable("email") String email, @RequestBody List<String> _interests) {
+    public ResponseEntity<Void> update(@PathVariable("email") String email, @RequestBody List<Interests> _interests) {
         // id
         interestSaveService.save(_interests, email);
         return ResponseEntity.status(HttpStatus.CREATED).build();

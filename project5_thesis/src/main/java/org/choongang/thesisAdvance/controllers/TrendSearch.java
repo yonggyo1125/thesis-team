@@ -11,9 +11,9 @@ import java.util.List;
 public class TrendSearch extends ThesisSearch {
     private List<String> job; // 직업 정보
 
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate sDate;
 
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate eDate;
 }

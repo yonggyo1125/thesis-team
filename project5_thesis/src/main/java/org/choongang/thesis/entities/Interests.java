@@ -1,5 +1,6 @@
 package org.choongang.thesis.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @IdClass(InterestsId.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Interests {
     @Id
     @Column(length = 65)

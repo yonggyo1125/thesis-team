@@ -102,6 +102,6 @@ public class Utils { // 빈의 이름 - utils
     public int guestUid() {
         String ip = request.getRemoteAddr();
         String ua = request.getHeader("User-Agent");
-        return Objects.hash(ip, ua);
+        return Objects.hash(ip, ua); //ip 주소 hashcode
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @SpringBootTest
 public class ListSearchTest {
@@ -30,6 +31,20 @@ public class ListSearchTest {
 
         ListData<Thesis> result = infoService.getList(search);
 
+        System.out.println(result);
+    }
+
+    @Test
+    @DisplayName("고급 검색 테스트")
+    void advancedSearchTest() {
+        search = new ThesisSearch();
+        search.setPublisher("학회");
+        search.setOperators(List.of("AND", "OR"));
+        search.setTitle("고등");
+
+        System.out.println(search);
+
+        ListData<Thesis> result = infoService.getList(search);
         System.out.println(result);
     }
 }

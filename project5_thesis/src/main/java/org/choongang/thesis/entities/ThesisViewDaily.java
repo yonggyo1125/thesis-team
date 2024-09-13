@@ -17,8 +17,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(ThesisViewDailyId.class)
-public class ThesisViewDaily {
+public class ThesisViewDaily { //기간 조회, 통계에 사용->하루 지나면 기록 누적
     @Id
+    @Column(name="_TID")
     private Long tid;
 
     @Id

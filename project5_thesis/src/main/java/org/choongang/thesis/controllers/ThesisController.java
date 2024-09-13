@@ -95,13 +95,11 @@ public class ThesisController {
     @GetMapping("/info/{tid}")
     @PreAuthorize("permitAll()")
     public JSONData info(@PathVariable("tid") Long tid) {
-        thesisViewService.updateViewCount(tid);
+        thesisViewService.updateViewCount(tid); //조회수 추가
         thesisViewService.dailylog(tid);
-
         Thesis item = thesisInfoService.get(tid);
 
         userLogService.save(tid);//조회한 논문 번호 저장
-
 
         return new JSONData(item);
 

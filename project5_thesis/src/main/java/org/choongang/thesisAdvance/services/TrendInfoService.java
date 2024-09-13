@@ -4,6 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.choongang.thesis.entities.QThesisViewDaily;
 import org.choongang.thesis.entities.QUserLog;
 import org.choongang.thesisAdvance.controllers.TrendSearch;
 import org.springframework.stereotype.Service;
@@ -31,11 +32,9 @@ public class TrendInfoService {
         if (sDate != null) {
             builder.and(userLog.searchDate.after(sDate.atStartOfDay()));
         }
-
         if (eDate != null) {
             builder.and(userLog.searchDate.before(eDate.atTime(LocalTime.MAX)));
         }
-
         if (job != null && !job.isEmpty()) {
             builder.and(userLog.job.in(job));
         }
@@ -55,8 +54,36 @@ public class TrendInfoService {
                 return data;
             }).toList();
         }
-
         return Collections.EMPTY_LIST;
+    }
+
+    public List<Map<String, Object>> getFieldRanking(TrendSearch search) {
+        LocalDate sDate = search.getSDate();
+        LocalDate eDate = search.getEDate();
+        if (sDate == null) {
+            return null;
+        }
+
+        QThesisViewDaily daily = QThesisViewDaily.thesisViewDaily;
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(daily.date.goe(sDate));
+
+        if (eDate != null) {
+            builder.and(daily.date.loe(eDate));
+        }
+
+        List<String> items = queryFactory.select(daily.fields)
+                .from(daily)
+                .where(builder)
+                .fetch();
+
+        if (items == null || items.isEmpty()) {
+            return null;
+        }
+
+
+
+        return null;
     }
 }
 

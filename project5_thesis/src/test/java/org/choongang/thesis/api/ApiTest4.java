@@ -217,10 +217,10 @@ public class ApiTest4 {
         String subtitle = parts.length > 1 ? parts[1] : "";
 
         Field field = fieldRepository.findBySubfield(subtitle);
-        if (field.getSubfield().equals(subtitle)) {
-            String _id = field.getId();
-            System.out.println("_id: " + _id);
-        } //field id 가져오기
+        if (field == null) {
+            field = fieldRepository.findByName(name);
+            //name이 여러개인 경우도 고려해야 함
+        }
 
         // 첫 번째 제목을 추출
         String title = null;

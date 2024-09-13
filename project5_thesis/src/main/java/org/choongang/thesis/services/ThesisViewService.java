@@ -19,16 +19,16 @@ import java.util.stream.Collectors;
 public class ThesisViewService {
 
     private final ThesisViewDailyRepository dailyRepository;
-    private final ThesisViewRepository repository;
-    private final ThesisInfoService infoService;
+    private final ThesisViewRepository viewRepository;
     private final ThesisRepository thesisRepository;
+    private final ThesisInfoService infoService;
     private final MemberUtil memberUtil;
     private final Utils utils;
 
     public void dailylog(Long tid) {
         try {
             Thesis item = infoService.get(tid);
-            List< Field> fields = item.getFields();
+            List<Field> fields = item.getFields();
             String _fields = fields == null || fields.isEmpty() ? null : fields.stream().map(Field::getId).collect(Collectors.joining(","));
 
             int uid = memberUtil.isLogin() ? Objects.hash(memberUtil.getMember().getEmail()) : utils.guestUid();
@@ -54,15 +54,13 @@ public class ThesisViewService {
             view.setTid(tid);
             view.setUid(uid);
 
-            repository.saveAndFlush(view);
+            viewRepository.saveAndFlush(view);
 
             QThesisView thesisView = QThesisView.thesisView;
-            long total = repository.count(thesisView.tid.eq(tid)); // 조회수
-            item.setViewCount((int)total);
+            long total = viewRepository.count(thesisView.tid.eq(tid)); // 조회수
+            item.setViewCount((int) total);
             thesisRepository.saveAndFlush(item);
 
         } catch (Exception e) {}
-
-
     }
 }
