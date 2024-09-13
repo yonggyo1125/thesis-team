@@ -67,10 +67,12 @@ public class MemberSaveService {
         gid = StringUtils.hasText(gid) ? gid : UUID.randomUUID().toString();
         member.setGid(gid);
 
-        ApiRequest result = apiRequest.request("/interest/update/" + member.getEmail(), "thesis-service", HttpMethod.PATCH, member.getInterests());
-        if (!result.getStatus().is2xxSuccessful()) {
-            System.out.println(result);
-            throw new InterestSaveFailException();
+        if (member.getInterests() != null) {
+            ApiRequest result = apiRequest.request("/interest/update/" + member.getEmail(), "thesis-service", HttpMethod.PATCH, member.getInterests());
+            if (!result.getStatus().is2xxSuccessful()) {
+                System.out.println(result);
+                throw new InterestSaveFailException();
+            }
         }
         memberRepository.saveAndFlush(member);
 

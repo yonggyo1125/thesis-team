@@ -34,6 +34,7 @@ public class ApiRequest {
 
     public ApiRequest request(String url, String serviceId, HttpMethod method, Object data) {
         String requestUrl = utils.url(url, serviceId);
+        System.out.println("requestUrl:" + requestUrl);
         method = Objects.requireNonNullElse(method, HttpMethod.GET);
 
         HttpHeaders headers = new HttpHeaders();
