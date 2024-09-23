@@ -1,5 +1,6 @@
 package org.choongang.global.filters;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,7 +14,6 @@ import org.choongang.member.MemberInfo;
 import org.choongang.member.constants.Authority;
 import org.choongang.member.entities.Authorities;
 import org.choongang.member.entities.Member;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.GenericFilterBean;
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.io.IOException;
 import java.util.List;
 

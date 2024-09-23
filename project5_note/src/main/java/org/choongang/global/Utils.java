@@ -104,4 +104,12 @@ public class Utils { // 빈의 이름 - utils
         String ua = request.getHeader("User-Agent");
         return Objects.hash(ip, ua);
     }
+
+    /*
+    * 요청 데이터 단일 조회 편의 함수
+    * */
+
+    public String getParam(String name) {
+        return request.getParameter(name);
+    }
 }
